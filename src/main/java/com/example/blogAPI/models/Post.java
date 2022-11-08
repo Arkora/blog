@@ -8,7 +8,10 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import java.util.Collection;
 import java.util.Date;
+
 
 import static javax.persistence.GenerationType.SEQUENCE;
 
@@ -24,8 +27,10 @@ public class Post {
     @Column(name = "id",updatable = false)
     private Long id;
     @Column(name="title",columnDefinition = "TEXT")
+    @NotEmpty(message = "Title needed")
     private String title;
     @Column(name="body",columnDefinition = "TEXT")
+    @NotEmpty(message = "Body of post needed")
     private String body;
     @CreationTimestamp
     @Temporal(TemporalType.TIMESTAMP)
@@ -33,12 +38,19 @@ public class Post {
     private Date createdAt;
 
     @NotNull
-    @ManyToOne()
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id", nullable = false)
     @JsonBackReference
     private User user;
 
+    @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Collection<Comment> comments;
 
 
-
+    public Post(String title, String body, Date createdAt, User user) {
+        this.title = title;
+        this.body = body;
+        this.createdAt = createdAt;
+        this.user = user;
+    }
 }

@@ -8,9 +8,12 @@ import lombok.NoArgsConstructor;
 
 
 import javax.persistence.*;
+import javax.validation.constraints.Email;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 
+import static javax.persistence.FetchType.EAGER;
 import static javax.persistence.GenerationType.SEQUENCE;
 @Data
 @NoArgsConstructor
@@ -25,10 +28,11 @@ public class User {
     @GeneratedValue(strategy = SEQUENCE,generator = "user_sequence")
     @Column(name = "id",updatable = false)
     private Long id;
-    @Column(name = "first_name",nullable = false,columnDefinition = "TEXT")
-    private String firstName;
-    @Column(name = "last_name",nullable = false,columnDefinition = "TEXT")
-    private String lastName;
+    @Column(name = "firstname",nullable = false,columnDefinition = "TEXT")
+    private String firstname;
+    @Column(name = "lastname",nullable = false,columnDefinition = "TEXT")
+    private String lastname;
+    @Email
     @Column(name = "email",columnDefinition = "TEXT",nullable = false,unique = true)
     private String email;
 
@@ -40,9 +44,23 @@ public class User {
     @Column(name = "created_at",columnDefinition = "DATE DEFAULT CURRENT_DATE",updatable = false)
     private Date createdAt;
 
+    @ManyToMany(fetch = EAGER, cascade = CascadeType.ALL)
+    private Collection<Role> roles = new ArrayList<>();
+
     @OneToMany(mappedBy = "user" ,cascade = CascadeType.ALL)
     @JsonManagedReference
     private Collection<Post> posts;
 
+    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Collection<Comment> comments;
 
+
+    public User(String firstname,String lastname,String email,String username,String password){
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+    }
 }
