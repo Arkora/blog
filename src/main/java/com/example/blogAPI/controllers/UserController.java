@@ -1,60 +1,54 @@
 package com.example.blogAPI.controllers;
 
+import com.example.blogAPI.dtos.response.MessageResponse;
+import com.example.blogAPI.dtos.userDto.LoginDTO;
+import com.example.blogAPI.dtos.userDto.SignupDTO;
 import com.example.blogAPI.dtos.userDto.UserDetailsDTO;
+import com.example.blogAPI.dtos.userDto.UserPostsDTO;
 import com.example.blogAPI.models.User;
-import com.example.blogAPI.services.UserService;
-import org.modelmapper.ModelMapper;
-import org.modelmapper.convention.MatchingStrategies;
+import com.example.blogAPI.services.user.UserDetailsImpl;
+import com.example.blogAPI.services.user.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.*;
 
 
 @RestController
+@RequestMapping("/api/user")
 public class UserController {
 
     @Autowired
-    private UserService userService;
+    private UserServiceImpl userServiceImpl;
 
-    @Autowired
-    private ModelMapper modelMapper;
-
-    private UserDetailsDTO convertEntityToDto(User user){
-        modelMapper.getConfiguration()
-                .setMatchingStrategy(MatchingStrategies.LOOSE);
-        UserDetailsDTO userDetailsDTO = modelMapper.map(user,UserDetailsDTO.class);
-        return userDetailsDTO;
-    }
-
-    @ResponseStatus(code = HttpStatus.CREATED)
-    @PostMapping(value = "/register")
-    public void addUser(@RequestBody  User user) {
-        userService.registerUser(user);
-    }
-
-    @GetMapping(value = "/users")
-    public ResponseEntity<List<UserDetailsDTO>> getUsers(){
-        return  ResponseEntity.ok(userService.findUsers());
-    }
-
-    @GetMapping(value = "/user/{id}")
+    @GetMapping(value = "/{id}")
+    @PreAuthorize("(authentication.principal.id == #id) or hasAuthority('ADMIN')")
     public ResponseEntity<UserDetailsDTO> getUser(@PathVariable Long id){
 
-        return ResponseEntity.ok(convertEntityToDto(userService.findUser(id)));
+        return ResponseEntity.ok(userServiceImpl.getUserById(id));
     }
 
-    @PatchMapping(value = "user/update/{id}")
-    public ResponseEntity<UserDetailsDTO> updateUser(@PathVariable Long id, @RequestBody  Map<Object,Object> fields){
-        return ResponseEntity.ok(convertEntityToDto(userService.updateUser(id,fields)));
+    @PatchMapping(value = "/update/{id}")
+    @PreAuthorize("(authentication.principal.id == #id) or hasAuthority('ADMIN')")
+    public ResponseEntity<?> updateUser(@PathVariable Long id, @RequestBody  Map<Object,Object> fields){
+        userServiceImpl.updateUser(id, fields);
+        return ResponseEntity.ok().body(new MessageResponse("User updated"));
     }
-
-    @DeleteMapping(value = "/user/delete/{id}")
+   @DeleteMapping(value = "/delete/{id}")
+   @PreAuthorize("(authentication.principal.id == #id) or hasAuthority('ADMIN')")
     public ResponseEntity<String> deleteUser(@PathVariable Long id){
-        User user = userService.deleteUser(id);
-        return ResponseEntity.ok("User "+user.getFirstName()+" deleted");
+         userServiceImpl.deleteUser(id);
+        return ResponseEntity.ok("User  deleted");
+    }
+
+    @GetMapping(value = "/post/{id}")
+    @PreAuthorize("(authentication.principal.id == #id) or hasAuthority('ADMIN')")
+    public ResponseEntity<UserPostsDTO> getUsersPosts(@PathVariable Long id){
+        return ResponseEntity.ok().body(userServiceImpl.getUsersPosts(id));
     }
 
 
