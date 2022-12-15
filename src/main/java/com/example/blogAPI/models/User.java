@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 
 import javax.persistence.*;
@@ -39,19 +40,24 @@ public class User {
     @Column(name="username", columnDefinition = "TEXT", nullable = false,unique = true)
     private String username;
 
+    @Lob
+    @Type(type = "org.hibernate.type.BinaryType")
+   // @Column(name = "photo",columnDefinition = "BYTEA")
+    private byte[] photo;
+
     @Column(name = "password", columnDefinition = "TEXT", nullable = false)
     private String password;
     @Column(name = "created_at",columnDefinition = "DATE DEFAULT CURRENT_DATE",updatable = false)
     private Date createdAt;
 
-    @ManyToMany(fetch = EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(fetch = EAGER)
     private Collection<Role> roles = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user" ,cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user" )
     @JsonManagedReference
     private Collection<Post> posts;
 
-    @OneToMany(mappedBy = "user",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user")
     @JsonManagedReference
     private Collection<Comment> comments;
 
@@ -61,6 +67,15 @@ public class User {
         this.lastname = lastname;
         this.username = username;
         this.email = email;
+        this.password = password;
+    }
+
+    public User(String firstname, String lastname, String email, String username, byte[] photo, String password) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.email = email;
+        this.username = username;
+        this.photo = photo;
         this.password = password;
     }
 }

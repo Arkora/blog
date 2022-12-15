@@ -1,7 +1,7 @@
 package com.example.blogAPI.services.post;
 
+import com.example.blogAPI.dtos.postDto.PostDTO;
 import com.example.blogAPI.dtos.postDto.PostRequest;
-import com.example.blogAPI.models.Post;
 
 import java.util.Map;
 
@@ -11,5 +11,6 @@ public interface PostService {
 
     void updatePost(Long id, Map<Object,Object> fields);
 
-    Post getPost(Long id);
+    PostDTO getPostById (Long id);
+
 }

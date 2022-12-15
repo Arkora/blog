@@ -5,9 +5,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
-
-import javax.servlet.ServletException;
-import java.io.IOException;
 import java.util.Date;
 
 @ControllerAdvice
@@ -21,13 +18,6 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorDetails, HttpStatus.NOT_FOUND);
     }
 
-    @ExceptionHandler(IOException.class )
-    public ResponseEntity<?> IOExceptionHandling(IOException exception, WebRequest request){
-        ErrorDetails errorDetails =
-                new ErrorDetails(new Date(), exception.getMessage(), request.getDescription(false));
-        return new ResponseEntity<>(errorDetails, HttpStatus.FORBIDDEN);
-    }
-
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<?> globalExceptionHandling(Exception exception, WebRequest request){
@@ -35,11 +25,6 @@ public class GlobalExceptionHandler {
                 new ErrorDetails(new Date(), exception.getMessage(), request.getDescription(false));
         return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
     }
-    @ExceptionHandler(ServletException.class)
-    public ResponseEntity<?> ServletExceptionHandling(ServletException exception, WebRequest request){
-        ErrorDetails errorDetails =
-                new ErrorDetails(new Date(), exception.getMessage(), request.getDescription(false));
-        return new ResponseEntity<>(errorDetails, HttpStatus.BAD_REQUEST);
-    }
+
 
 }
