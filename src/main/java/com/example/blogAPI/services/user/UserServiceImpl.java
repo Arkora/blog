@@ -16,14 +16,15 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
+import static org.springframework.util.StringUtils.capitalize;
 
 import javax.transaction.Transactional;
 import java.lang.reflect.Field;
-import java.util.Date;
-import java.util.Map;
+import java.util.*;
 
 @Service @RequiredArgsConstructor @Transactional @Slf4j
 public class UserServiceImpl implements UserService {
@@ -57,6 +58,8 @@ public class UserServiceImpl implements UserService {
         return userPostsDTO;
     }
 
+
+
     @Override
     public void saveUser(User user) {
         boolean existsByEmail = userRepository.existsByEmail(user.getEmail());
@@ -71,6 +74,8 @@ public class UserServiceImpl implements UserService {
         user.setCreatedAt(new Date());
         user.setUsername(user.getUsername().toLowerCase());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setFirstname(capitalize(user.getFirstname()));
+        user.setLastname(capitalize(user.getLastname()));
         userRepository.save(user);
         addRoleToUser(user.getUsername(),"USER");
 
@@ -90,6 +95,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDetailsImpl getUserByUsername(String username,String password) {
+            User user = userRepository.findByUsername(username);
+            if (user == null){
+                throw new UsernameNotFoundException("User Not Found with username: " + username);
+            }
+
+
         Authentication authentication = authenticationManager
                 .authenticate(new UsernamePasswordAuthenticationToken(username, password));
 
@@ -135,5 +146,16 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(id)
                 .orElseThrow( () -> new ResourceNotFoundException("User not exists"));
         return convertEntityToUserPostsDto(user);
+    }
+
+    @Override
+    public Collection<UserPostsDTO> getRandomPosts() {
+        List<User> users = userRepository.findAll();
+        Collection<UserPostsDTO> userPostsDTOS = new ArrayList<>();
+
+        users.forEach(user -> {
+            userPostsDTOS.add(convertEntityToUserPostsDto(user));
+        });
+        return userPostsDTOS;
     }
 }

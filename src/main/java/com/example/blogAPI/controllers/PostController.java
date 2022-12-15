@@ -2,22 +2,18 @@ package com.example.blogAPI.controllers;
 
 import com.example.blogAPI.dtos.postDto.PostRequest;
 import com.example.blogAPI.dtos.response.MessageResponse;
-import com.example.blogAPI.models.Post;
-import com.example.blogAPI.services.PostService;
 import com.example.blogAPI.services.post.PostServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.persistence.Entity;
-import java.util.List;
 import java.util.Map;
 
 @RestController
 @RequestMapping(value = "/api/posts")
+@CrossOrigin(origins = "http://localhost:3000",allowCredentials = "true")
 public class PostController {
 
 
@@ -32,6 +28,12 @@ public class PostController {
       return  ResponseEntity.ok().body(new MessageResponse("Post created successfully"));
     }
 
+    @GetMapping(value = "/{id}")
+    @PreAuthorize("hasAuthority('USER')")
+    public ResponseEntity<?> getPost(@PathVariable Long id){
+        return ResponseEntity.ok().body(postService.getPostById(id));
+
+    }
     @DeleteMapping(value = "/delete/{id}")
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<?> deletePost(@PathVariable Long id){

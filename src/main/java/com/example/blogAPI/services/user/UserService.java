@@ -5,6 +5,7 @@ import com.example.blogAPI.dtos.userDto.UserPostsDTO;
 import com.example.blogAPI.models.Role;
 import com.example.blogAPI.models.User;
 
+import java.util.Collection;
 import java.util.Map;
 
 public interface UserService {
@@ -16,6 +17,8 @@ public interface UserService {
     void deleteUser(Long id);
 
     UserPostsDTO getUsersPosts(Long id);
+
+    Collection<UserPostsDTO> getRandomPosts();
 
     void updateUser(Long id, Map<Object,Object> fields);
 
