@@ -9,6 +9,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 @Data
@@ -19,12 +20,13 @@ public class UserDetailsImpl implements UserDetails {
     private String lastname;
     private String username;
     private String email;
+    private Date createdAt;
     @JsonIgnore
     private String password;
 
     private Collection<? extends GrantedAuthority> authorities;
 
-    public UserDetailsImpl(Long id, String username, String email,String lastname,String firstname, String password,
+    public UserDetailsImpl(Long id, String username, String email,String lastname,String firstname, String password,Date createdAt,
                            Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
@@ -33,6 +35,7 @@ public class UserDetailsImpl implements UserDetails {
         this.authorities = authorities;
         this.firstname = firstname;
         this.lastname = lastname;
+        this.createdAt = createdAt;
     }
 
     public static UserDetailsImpl build(User user) {
@@ -47,6 +50,7 @@ public class UserDetailsImpl implements UserDetails {
                 user.getLastname(),
                 user.getFirstname(),
                 user.getPassword(),
+                user.getCreatedAt(),
                 authorities);
     }
 

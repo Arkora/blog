@@ -45,8 +45,10 @@ public class PostController {
     @PreAuthorize("hasAuthority('USER')")
     public ResponseEntity<?> updatePost(@PathVariable Long id ,@RequestBody Map<Object,Object> fields){
         postService.updatePost(id, fields);
+        System.out.println(fields.keySet());
         return  ResponseEntity.ok().body(new MessageResponse("Post updated successfully"));
     }
+
 
 
 }

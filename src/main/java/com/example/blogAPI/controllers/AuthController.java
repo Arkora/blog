@@ -51,7 +51,8 @@ public class AuthController {
                         userDetails.getLastname(),
                         userDetails.getUsername(),
                         userDetails.getEmail(),
-                        token));
+                        token,
+                        userDetails.getCreatedAt()));
 
     }
 

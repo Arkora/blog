@@ -70,7 +70,10 @@ public class PostServiceImpl implements PostService{
             field.setAccessible(true);
             ReflectionUtils.setField(field,post,value);
         });
+
+        postRepository.save(post);
     }
+
 
 
     @Override

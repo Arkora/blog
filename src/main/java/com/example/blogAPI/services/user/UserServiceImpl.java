@@ -133,7 +133,10 @@ public class UserServiceImpl implements UserService {
         fields.forEach((key,value) ->{
             Field field = ReflectionUtils.findField(User.class,(String) key);
             if (field.getName() == "email"){
-                throw new RuntimeException("Email already registered");
+                boolean existsByEmail = userRepository.existsByEmail((String) value);
+                if (existsByEmail){
+                    throw new RuntimeException("Email already taken");
+                }
             }
             field.setAccessible(true);
             ReflectionUtils.setField(field,user,value);

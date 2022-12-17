@@ -38,9 +38,9 @@ public class UserController {
     }
    @DeleteMapping(value = "/delete/{id}")
    @PreAuthorize("(authentication.principal.id == #id) or hasAuthority('ADMIN')")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id){
+    public ResponseEntity<?> deleteUser(@PathVariable Long id){
          userServiceImpl.deleteUser(id);
-        return ResponseEntity.ok("User  deleted");
+        return ResponseEntity.ok().body(new MessageResponse("Account Deleted Successfully"));
     }
 
     @GetMapping(value = "/post/{id}")
