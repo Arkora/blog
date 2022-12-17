@@ -1,5 +1,6 @@
 package com.example.blogAPI.services.user;
 
+import com.example.blogAPI.dtos.userDto.PasswordChangeDTO;
 import com.example.blogAPI.dtos.userDto.UserDetailsDTO;
 import com.example.blogAPI.dtos.userDto.UserPostsDTO;
 import com.example.blogAPI.models.Role;
@@ -19,6 +20,7 @@ public interface UserService {
     UserPostsDTO getUsersPosts(Long id);
 
     Collection<UserPostsDTO> getRandomPosts();
+    void changePassword(PasswordChangeDTO passwordChangeDTO);
 
     void updateUser(Long id, Map<Object,Object> fields);
 

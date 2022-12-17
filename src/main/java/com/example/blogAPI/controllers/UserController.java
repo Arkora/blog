@@ -2,6 +2,7 @@ package com.example.blogAPI.controllers;
 
 import com.example.blogAPI.dtos.postDto.PostDTO;
 import com.example.blogAPI.dtos.response.MessageResponse;
+import com.example.blogAPI.dtos.userDto.PasswordChangeDTO;
 import com.example.blogAPI.dtos.userDto.UserDetailsDTO;
 import com.example.blogAPI.dtos.userDto.UserPostsDTO;
 import com.example.blogAPI.services.user.UserServiceImpl;
@@ -27,8 +28,15 @@ public class UserController {
     @PreAuthorize("(authentication.principal.id == #id) or hasAuthority('ADMIN')")
     public ResponseEntity<UserDetailsDTO> getUser(@PathVariable Long id){
 
-        return ResponseEntity.ok(userServiceImpl.getUserById(id));
+        return ResponseEntity.ok().body(userServiceImpl.getUserById(id));
     }
+    @PostMapping(value = "/update/password")
+    @PreAuthorize("(authentication.principal.id == #passwordChangeDTO.userId ) or hasAuthority('ADMIN')")
+    public ResponseEntity<?> updatePassword(@RequestBody PasswordChangeDTO passwordChangeDTO){
+        userServiceImpl.changePassword(passwordChangeDTO);
+        return ResponseEntity.ok().body(new MessageResponse("Password Changed Successfully"));
+    }
+
 
     @PatchMapping(value = "/update/{id}")
     @PreAuthorize("(authentication.principal.id == #id) or hasAuthority('ADMIN')")

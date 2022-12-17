@@ -1,5 +1,6 @@
 package com.example.blogAPI.services.user;
 
+import com.example.blogAPI.dtos.userDto.PasswordChangeDTO;
 import com.example.blogAPI.dtos.userDto.UserDetailsDTO;
 import com.example.blogAPI.dtos.userDto.UserPostsDTO;
 import com.example.blogAPI.exceptions.ResourceNotFoundException;
@@ -160,5 +161,18 @@ public class UserServiceImpl implements UserService {
             userPostsDTOS.add(convertEntityToUserPostsDto(user));
         });
         return userPostsDTOS;
+    }
+
+    @Override
+    public void changePassword(PasswordChangeDTO passwordChangeDTO) {
+        User user = userRepository.findById(passwordChangeDTO.getUserId())
+                .orElseThrow(() -> new ResourceNotFoundException("User not exists"));
+        boolean isTrue = passwordEncoder.matches(passwordChangeDTO.getPassword(), user.getPassword());
+        if (isTrue){
+            user.setPassword(passwordEncoder.encode(passwordChangeDTO.getNewPassword()));
+        }else {
+            throw new RuntimeException("Wrong password");
+        }
+
     }
 }
