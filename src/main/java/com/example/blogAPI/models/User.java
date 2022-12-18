@@ -61,6 +61,12 @@ public class User {
     @JsonManagedReference
     private Collection<Comment> comments;
 
+    @OneToMany(mappedBy = "user")
+    @JsonManagedReference
+    private Collection<Notification> notifications;
+
+
+
 
     public User(String firstname,String lastname,String email,String username,String password){
         this.firstname = firstname;
