@@ -154,7 +154,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public Collection<UserPostsDTO> getRandomPosts() {
-        List<User> users = userRepository.findAll();
+        Set<User> users = userRepository.getRandomPost();
         Collection<UserPostsDTO> userPostsDTOS = new ArrayList<>();
 
         users.forEach(user -> {
