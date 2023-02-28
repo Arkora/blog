@@ -14,12 +14,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Map;
 
 @Service
 public class PostServiceImpl implements PostService{
-
 
     @Autowired
     ModelMapper modelMapper;
@@ -84,5 +85,26 @@ public class PostServiceImpl implements PostService{
                 );
 
         return convertEntityToPostDto(post);
+    }
+
+    @Override
+    public Collection<PostDTO> getALl() {
+        Collection<Post> posts = postRepository.findAllByOrderByCreatedAtDesc();
+        Collection<PostDTO> postDTOS = new ArrayList<>();
+        posts.forEach((post) ->{
+            postDTOS.add(convertEntityToPostDto(post));
+        });
+        return postDTOS;
+
+    }
+
+    @Override
+    public Collection<PostDTO> getProfilePosts(Long id) {
+        Collection<Post> posts = postRepository.findAllByUserIdAndSortByDate(id);
+        Collection<PostDTO> postDTOS = new ArrayList<>();
+        posts.forEach((post) ->{
+            postDTOS.add(convertEntityToPostDto(post));
+        });
+        return postDTOS;
     }
 }

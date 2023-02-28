@@ -1,6 +1,7 @@
 package com.example.blogAPI.models;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -46,6 +47,7 @@ public class User {
     private byte[] photo;
 
     @Column(name = "password", columnDefinition = "TEXT", nullable = false)
+    @JsonIgnore
     private String password;
     @Column(name = "created_at",columnDefinition = "DATE DEFAULT CURRENT_DATE",updatable = false)
     private Date createdAt;
@@ -55,6 +57,7 @@ public class User {
 
     @OneToMany(mappedBy = "user" )
     @JsonManagedReference
+    @OrderBy("createdAt desc")
     private Collection<Post> posts;
 
     @OneToMany(mappedBy = "user")
