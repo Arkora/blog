@@ -19,7 +19,7 @@ public interface UserService {
 
     UserPostsDTO getUsersPosts(Long id);
 
-    Collection<UserPostsDTO> getRandomPosts();
+    Collection<Object > getRandomPosts();
     void changePassword(PasswordChangeDTO passwordChangeDTO);
 
     void updateUser(Long id, Map<Object,Object> fields);

@@ -50,5 +50,15 @@ public class PostController {
     }
 
 
+    @GetMapping(value = "/profile/{id}")
+    public ResponseEntity<?> getUsersPosts(@PathVariable Long id){
+        return ResponseEntity.ok().body(postService.getProfilePosts(id));
+    }
+    @GetMapping(value = "/all")
+    public ResponseEntity<?> getRandomPosts(){
+        return ResponseEntity.ok().body(postService.getALl());
+    }
+
+
 
 }

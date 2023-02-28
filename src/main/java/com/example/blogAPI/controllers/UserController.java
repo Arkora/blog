@@ -5,6 +5,7 @@ import com.example.blogAPI.dtos.response.MessageResponse;
 import com.example.blogAPI.dtos.userDto.PasswordChangeDTO;
 import com.example.blogAPI.dtos.userDto.UserDetailsDTO;
 import com.example.blogAPI.dtos.userDto.UserPostsDTO;
+import com.example.blogAPI.services.post.PostServiceImpl;
 import com.example.blogAPI.services.user.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +24,9 @@ public class UserController {
 
     @Autowired
     private UserServiceImpl userServiceImpl;
+
+    @Autowired
+    private PostServiceImpl postService;
 
     @GetMapping(value = "/{id}")
     @PreAuthorize("(authentication.principal.id == #id) or hasAuthority('ADMIN')")
@@ -59,21 +63,20 @@ public class UserController {
             userPostsDTO.getPosts().forEach(postDTO -> {
                 posts.add(postDTO);
             });
-
-
         return ResponseEntity.ok().body(posts);
     }
 
-    @GetMapping(value = "/posts")
-    public ResponseEntity<?> getUsersPosts(){
-        Collection<UserPostsDTO> userPostsDTOS = userServiceImpl.getRandomPosts();
-        Collection<PostDTO> posts = new ArrayList();
-        userPostsDTOS.forEach(userPostsDTO -> {
-            userPostsDTO.getPosts().forEach(postDTO -> {
-                posts.add(postDTO);
-            });
-        });
-        return ResponseEntity.ok().body(posts);
-    }
+//    @GetMapping(value = "/posts")
+//    public ResponseEntity<?> getUsersPosts(){
+////        Collection<Object > userPostsDTOS = userServiceImpl.getRandomPosts();
+////        Collection<PostDTO> posts = new ArrayList();
+////        userPostsDTOS.forEach(userPostsDTO -> {
+////            userPostsDTO.getPosts().forEach(postDTO -> {
+////                posts.add(postDTO);
+////            });
+////        });
+////        Collection<Object []> posts = userServiceImpl.getPostsOrdered();
+//        return ResponseEntity.ok().body(postService.getALl());
+//    }
 
 }

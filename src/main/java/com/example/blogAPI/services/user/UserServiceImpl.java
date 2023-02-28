@@ -1,9 +1,12 @@
 package com.example.blogAPI.services.user;
 
+import com.example.blogAPI.dtos.postDto.PostDTO;
 import com.example.blogAPI.dtos.userDto.PasswordChangeDTO;
 import com.example.blogAPI.dtos.userDto.UserDetailsDTO;
 import com.example.blogAPI.dtos.userDto.UserPostsDTO;
 import com.example.blogAPI.exceptions.ResourceNotFoundException;
+import com.example.blogAPI.models.Comment;
+import com.example.blogAPI.models.Post;
 import com.example.blogAPI.models.Role;
 import com.example.blogAPI.models.User;
 import com.example.blogAPI.repositories.RoleRepository;
@@ -23,6 +26,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 import static org.springframework.util.StringUtils.capitalize;
 
+import javax.persistence.EntityManager;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.lang.reflect.Field;
 import java.util.*;
@@ -32,6 +40,9 @@ public class UserServiceImpl implements UserService {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private EntityManager em;
 
     @Autowired
     private ModelMapper modelMapper;
@@ -153,14 +164,26 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Collection<UserPostsDTO> getRandomPosts() {
-        Set<User> users = userRepository.getRandomPost();
+    public Collection<Object> getRandomPosts() {
+        Collection<Object > users = userRepository.getRandomPost();
         Collection<UserPostsDTO> userPostsDTOS = new ArrayList<>();
+//        users.forEach((user) ->{
+//         userPostsDTOS.add(new PostDTO(user[3],user[0],user[1],user[2],user[5],user[6],user[7]))
+//        });
 
-        users.forEach(user -> {
-            userPostsDTOS.add(convertEntityToUserPostsDto(user));
-        });
-        return userPostsDTOS;
+        return users;
+    }
+
+    public Collection<Object []> getPostsOrdered(){
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Object []> cq = cb.createQuery(Object[].class);
+        Root<User> user = cq.from(User.class);
+        Join<User, Post> post = user.join("posts");
+        Join<Post, Comment> comment = post.join("comments");
+        cq.multiselect(user,post,comment);
+        cq.orderBy(cb.desc(post.get("createdAt")));
+        Collection<Object[]> result = em.createQuery(cq).getResultList();
+        return result;
     }
 
     @Override

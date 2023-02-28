@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 public class CommentController {
 
     @Autowired
-    CommentServiceImpl commentService;
+   private CommentServiceImpl commentService;
 
     @PostMapping(value = "/create")
     public ResponseEntity<?> createComment(@RequestBody CommentRequest commentRequest){
